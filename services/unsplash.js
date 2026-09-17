@@ -120,4 +120,21 @@ export async function getPopular(options = {}) {
   };
 }
 
-export default { search, getPopular };
+/**
+ * Fetches a single Unsplash photo by its provider-specific ID.
+ *
+ * @param {string} id - The raw Unsplash photo ID (without the "unsplash:" prefix).
+ * @returns {Promise<import("./normalize.js").NormalizedWallpaper|null>} `null` on 404.
+ */
+export async function getById(id) {
+  const client = getClient();
+  try {
+    const response = await requestWithSafeRetry(PROVIDER, () => client.get(`/photos/${id}`));
+    return normalizePhoto(response.data, "");
+  } catch (error) {
+    if (error.cause?.response?.status === 404) return null;
+    throw error;
+  }
+}
+
+export default { search, getPopular, getById };
