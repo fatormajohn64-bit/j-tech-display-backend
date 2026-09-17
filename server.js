@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import config, { validateConfig } from "./config/config.js";
 import healthRouter from "./routes/health.js";
+import searchRouter from "./routes/search.js";
+import wallpapersRouter from "./routes/wallpapers.js";
 
 const app = express();
 
@@ -60,10 +62,10 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/health", healthRouter);
+app.use("/api/search", searchRouter);
+app.use("/api/wallpapers", wallpapersRouter);
 
 // Future phases mount here:
-// app.use("/api/search", searchRouter);
-// app.use("/api/wallpapers", wallpapersRouter);
 // app.use("/api/categories", categoriesRouter);
 // app.use("/api/settings", settingsRouter);
 // app.use("/api/favorites", favoritesRouter);
