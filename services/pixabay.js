@@ -107,4 +107,22 @@ export async function getPopular(options = {}) {
   return search("", { ...options, sort: "popularity" });
 }
 
-export default { search, getPopular };
+/**
+ * Fetches a single Pixabay image by its provider-specific numeric ID.
+ * Pixabay has no dedicated by-ID endpoint — the same search endpoint
+ * accepts an `id` param and returns a single-item `hits` array.
+ *
+ * @param {string|number} id - The raw Pixabay hit ID (without the "pixabay:" prefix).
+ * @returns {Promise<import("./normalize.js").NormalizedWallpaper|null>} `null` if not found.
+ */
+export async function getById(id) {
+  const client = getClient();
+  const response = await requestWithSafeRetry(PROVIDER, () =>
+    client.get("/", { params: { id } })
+  );
+  const hits = response.data?.hits || [];
+  if (hits.length === 0) return null;
+  return normalizeHit(hits[0], "");
+}
+
+export default { search, getPopular, getById };
