@@ -110,4 +110,44 @@ export async function getPopular(options = {}) {
   return search("", { ...options, sort: "toplist" });
 }
 
-export default { search, getPopular };
+/**
+ * Fetches a single Wallhaven wallpaper by its provider-specific ID.
+ *
+ * Unlike `/search`, Wallhaven's detail endpoint (`/w/:id`) also returns
+ * uploader info and a full tags array, so this normalizes a richer
+ * object than search results carry — that's expected and correct.
+ *
+ * @param {string} id - The raw Wallhaven ID (without the "wallhaven:" prefix).
+ * @returns {Promise<import("./normalize.js").NormalizedWallpaper|null>} `null` on 404.
+ */
+export async function getById(id) {
+  const client = getClient();
+  try {
+    const response = await requestWithSafeRetry(PROVIDER, () => client.get(`/w/${id}`));
+    const entry = response.data?.data;
+    if (!entry) return null;
+
+    return buildNormalizedWallpaper({
+      source: PROVIDER,
+      providerId: entry.id,
+      image_url: entry.path || "",
+      thumbnail_url: entry.thumbs?.large || entry.thumbs?.small || "",
+      width: entry.dimension_x || null,
+      height: entry.dimension_y || null,
+      author: {
+        name: entry.uploader?.username || "",
+        url: entry.uploader?.username
+          ? `https://wallhaven.cc/user/${entry.uploader.username}`
+          : "",
+      },
+      source_url: entry.url || "",
+      tags: Array.isArray(entry.tags) ? entry.tags.map((tag) => tag.name).filter(Boolean) : [],
+      category: "",
+    });
+  } catch (error) {
+    if (error.cause?.response?.status === 404) return null;
+    throw error;
+  }
+}
+
+export default { search, getPopular, getById };
