@@ -4,6 +4,7 @@ import config, { validateConfig } from "./config/config.js";
 import healthRouter from "./routes/health.js";
 import searchRouter from "./routes/search.js";
 import wallpapersRouter from "./routes/wallpapers.js";
+import categoriesRouter from "./routes/categories.js";
 
 const app = express();
 
@@ -64,9 +65,9 @@ app.get("/", (req, res) => {
 app.use("/api/health", healthRouter);
 app.use("/api/search", searchRouter);
 app.use("/api/wallpapers", wallpapersRouter);
+app.use("/api/categories", categoriesRouter);
 
 // Future phases mount here:
-// app.use("/api/categories", categoriesRouter);
 // app.use("/api/settings", settingsRouter);
 // app.use("/api/favorites", favoritesRouter);
 // app.use("/api/users", usersRouter);
