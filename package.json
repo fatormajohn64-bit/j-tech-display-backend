@@ -1,0 +1,32 @@
+{
+  "name": "j-tech-display-backend",
+  "version": "1.0.0",
+  "description": "J-Tech Display backend — aggregates wallpapers from Pexels, Pixabay, Unsplash, and Wallhaven into a unified, ranked, deduplicated feed and search API.",
+  "type": "module",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "wallpaper",
+    "express",
+    "supabase",
+    "pexels",
+    "pixabay",
+    "unsplash",
+    "wallhaven"
+  ],
+  "author": "J-Tech Display",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.4",
+    "axios": "^1.7.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0"
+  }
+}
