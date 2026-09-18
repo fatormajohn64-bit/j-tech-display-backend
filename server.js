@@ -5,6 +5,9 @@ import healthRouter from "./routes/health.js";
 import searchRouter from "./routes/search.js";
 import wallpapersRouter from "./routes/wallpapers.js";
 import categoriesRouter from "./routes/categories.js";
+import settingsRouter from "./routes/settings.js";
+import favoritesRouter from "./routes/favorites.js";
+import usersRouter from "./routes/users.js";
 
 const app = express();
 
@@ -66,11 +69,9 @@ app.use("/api/health", healthRouter);
 app.use("/api/search", searchRouter);
 app.use("/api/wallpapers", wallpapersRouter);
 app.use("/api/categories", categoriesRouter);
-
-// Future phases mount here:
-// app.use("/api/settings", settingsRouter);
-// app.use("/api/favorites", favoritesRouter);
-// app.use("/api/users", usersRouter);
+app.use("/api/settings", settingsRouter);
+app.use("/api/favorites", favoritesRouter);
+app.use("/api/users", usersRouter);
 
 // ------------------------------------------------------------------
 // 404 handler — must come after all routes
