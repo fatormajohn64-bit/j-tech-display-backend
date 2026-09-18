@@ -1,6 +1,9 @@
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
+import compression from "compression";
 import config, { validateConfig } from "./config/config.js";
+import { generalLimiter, providerLimiter } from "./middleware/rateLimit.js";
 import healthRouter from "./routes/health.js";
 import searchRouter from "./routes/search.js";
 import wallpapersRouter from "./routes/wallpapers.js";
@@ -11,9 +14,17 @@ import usersRouter from "./routes/users.js";
 
 const app = express();
 
+// Render (and most PaaS hosts) sit behind a reverse proxy — this makes
+// req.ip reflect the real client IP instead of the proxy's, which the
+// rate limiters below depend on to work per-user rather than as one
+// shared bucket for the whole platform.
+app.set("trust proxy", 1);
+
 // ------------------------------------------------------------------
 // Core middleware
 // ------------------------------------------------------------------
+app.use(helmet());
+app.use(compression());
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 
@@ -66,6 +77,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/health", healthRouter);
+app.use("/api", generalLimiter);
+app.use(["/api/search", "/api/wallpapers", "/api/categories"], providerLimiter);
 app.use("/api/search", searchRouter);
 app.use("/api/wallpapers", wallpapersRouter);
 app.use("/api/categories", categoriesRouter);
